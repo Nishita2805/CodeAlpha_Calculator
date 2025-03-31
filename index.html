@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #2c3e50, #4ca1af);
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        .calculator {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            height: 50px;
+            font-size: 24px;
+            text-align: right;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: none;
+            outline: none;
+            border-radius: 5px;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        button {
+            width: 100%;
+            height: 50px;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #555;
+            color: white;
+        }
+        .advanced-buttons {
+            display: none;
+            margin-top: 10px;
+        }
+        .history {
+            width: 200px;
+            background: #333;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .history h3 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .history p {
+            font-size: 14px;
+            border-bottom: 1px solid #555;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="calculator">
+            <input type="text" id="display" readonly>
+
+            <div class="buttons">
+                <button onclick="clearDisplay()">C</button>
+                <button onclick="deleteLast()">⌫</button>
+                <button onclick="appendValue('/')">÷</button>
+                <button onclick="appendValue('*')">×</button>
+
+                <button onclick="appendValue('7')">7</button>
+                <button onclick="appendValue('8')">8</button>
+                <button onclick="appendValue('9')">9</button>
+                <button onclick="appendValue('-')">−</button>
+
+                <button onclick="appendValue('4')">4</button>
+                <button onclick="appendValue('5')">5</button>
+                <button onclick="appendValue('6')">6</button>
+                <button onclick="appendValue('+')">+</button>
+
+                <button onclick="appendValue('1')">1</button>
+                <button onclick="appendValue('2')">2</button>
+                <button onclick="appendValue('3')">3</button>
+                <button onclick="calculateResult()">=</button>
+
+                <button onclick="appendValue('0')">0</button>
+                <button onclick="appendValue('.')">.</button>
+                <button onclick="toggleAdvanced()">Advanced</button>
+            </div>
+
+            <!-- Advanced Functions (Initially Hidden) -->
+            <div class="advanced-buttons buttons">
+                <button onclick="calculateSin()">sin</button>
+                <button onclick="calculateCos()">cos</button>
+                <button onclick="calculateTan()">tan</button>
+                <button onclick="squareRoot()">√</button>
+
+                <button onclick="power()">x²</button>
+                <button onclick="calculateLog()">log</button>
+                <button onclick="calculateExp()">exp</button>
+            </div>
+        </div>
+
+        <!-- History Panel -->
+        <div class="history">
+            <h3>History</h3>
+            <div id="history-log"></div>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById("display");
+        let historyLog = document.getElementById("history-log");
+        let advancedMode = false;
+
+        function appendValue(value) {
+            display.value += value;
+        }
+
+        function clearDisplay() {
+            display.value = "";
+        }
+
+        function deleteLast() {
+            display.value = display.value.slice(0, -1);
+        }
+
+        function calculateResult() {
+            try {
+                let result = eval(display.value);
+                addToHistory(display.value + " = " + result);
+                display.value = result;
+            } catch {
+                display.value = "Error";
+            }
+        }
+
+        function addToHistory(entry) {
+            let p = document.createElement("p");
+            p.innerText = entry;
+            historyLog.prepend(p);
+        }
+
+        function toggleAdvanced() {
+            advancedMode = !advancedMode;
+            document.querySelector('.advanced-buttons').style.display = advancedMode ? "grid" : "none";
+        }
+
+        function calculateSin() {
+            if (display.value === "" || isNaN(eval(display.value))) {
+                display.value = "Error";
+                return;
+            }
+            let result = Math.sin(eval(display.value) * Math.PI / 180).toFixed(5);
+            addToHistory(`sin(${display.value}) = ${result}`);
+            display.value = result;
+        }
+
+        function calculateCos() {
+            if (display.value === "" || isNaN(eval(display.value))) {
+                display.value = "Error";
+                return;
+            }
+            let result = Math.cos(eval(display.value) * Math.PI / 180).toFixed(5);
+            addToHistory(`cos(${display.value}) = ${result}`);
+            display.value = result;
+        }
+
+        function calculateTan() {
+            if (display.value === "" || isNaN(eval(display.value))) {
+                display.value = "Error";
+                return;
+            }
+            let result = Math.tan(eval(display.value) * Math.PI / 180).toFixed(5);
+            addToHistory(`tan(${display.value}) = ${result}`);
+            display.value = result;
+        }
+
+        function squareRoot() {
+            if (display.value === "" || isNaN(eval(display.value))) {
+                display.value = "Error";
+                return;
+            }
+            let result = Math.sqrt(eval(display.value)).toFixed(5);
+            addToHistory(`√(${display.value}) = ${result}`);
+            display.value = result;
+        }
+
+        function power() {
+            if (display.value === "" || isNaN(eval(display.value))) {
+                display.value = "Error";
+                return;
+            }
+            let result = Math.pow(eval(display.value), 2);
+            addToHistory(`${display.value}² = ${result}`);
+            display.value = result;
+        }
+
+        function calculateLog() {
+            if (display.value === "" || isNaN(eval(display.value)) || eval(display.value) <= 0) {
+                display.value = "Error";
+                return;
+            }
+            let result = Math.log10(eval(display.value)).toFixed(5);
+            addToHistory(`log(${display.value}) = ${result}`);
+            display.value = result;
+        }
+
+        function calculateExp() {
+            if (display.value === "" || isNaN(eval(display.value))) {
+                display.value = "Error";
+                return;
+            }
+            let result = Math.exp(eval(display.value)).toFixed(5);
+            addToHistory(`exp(${display.value}) = ${result}`);
+            display.value = result;
+        }
+    </script>
+
+</body>
+</html>
